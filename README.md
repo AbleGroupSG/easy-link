@@ -23,7 +23,7 @@ EASY_LINK_APP_SECRET='Your app secret'
 #### 4.	Set the Private Key Path 
 In the published configuration file (config/easylink.php), specify the path to your private key file for the private_key parameter:
 ```php
-'private_key' => env('EASY_LINK_PRIVATE_KEY_PATH', '/path/to/your/private.key'),
+'private_key' => storage_path('/path/to/your/private_key.pem'),
 ```
 #### 5.	Ensure Required PHP Extension
 Your application needs the openssl PHP extension to use this package. Make sure ext-openssl is added to your main composer.json file to enforce this requirement:
