@@ -132,4 +132,113 @@ class EasyLink extends EasyLinkAbstract
             ->post(config('easy-link.url') . '/v2/data/supported-bank-code')
             ->json();
     }
+
+    /**
+     * @return array{
+     *      code: int,
+     *      message: string,
+     *     data: array<int, array{
+     *         country_code: string,
+     *         country_name: string,
+     *         alpha2_code: string,
+     *         alpha3_code: string,
+     *         country_flag_url: string,
+     *     }>
+     *  }
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function countriesList(): array
+    {
+        return Http::withHeaders($this->getHeader())
+            ->post(config('easy-link.url') . '/data/country-info')
+            ->json();
+    }
+
+    /**
+     * @return array{
+     *      code: int,
+     *      message: string,
+     *     data: array<int, array{
+     *         currency_code: string,
+     *         currency: string,
+     *         country_name: string,
+     *         country_alpha2_code: string,
+     *         country_alpha3_code: string,
+     *         country_flag_url: string,
+     *     }>
+     *  }
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function countriesCurrencies(): array
+    {
+        return Http::withHeaders($this->getHeader())
+            ->post(config('easy-link.url') . '/data/countries-currencies')
+            ->json();
+    }
+
+
+    /**
+     * @param string $reference
+     * @return array{
+     *      code: string,
+     *      message: string,
+     *      data: array{
+     *          source: array{
+     *              segment: string,
+     *              company_name: string,
+     *              company_trading_name: string,
+     *              company_registration_number: string,
+     *              company_registration_country: string,
+     *              address_line: string,
+     *              address_city: string,
+     *              address_country: string,
+     *          },
+     *          destination: array{
+     *              segment:string,
+     *              beneficiary_account_type:string,
+     *              bank:string,
+     *              bank_code:string,
+     *              bank_account_number:string,
+     *              company_name:string,
+     *              address_line:string,
+     *              address_city:string,
+     *              address_country:string,
+     *              relation:string,
+     *              relation_code:string,
+     *              purpose:string,
+     *              purpose_code:string,
+     *              source_of_income:string,
+     *              source_of_income_code:string,
+     *          },
+     *          transaction: array{
+     *              source_country: string,
+     *              source_currency: string,
+     *              destination_country: string,
+     *              destination_currency: string,
+     *              source_amount: string,
+     *              destination_amount: string,
+     *          },
+     *          reference: string,
+     *          state: int,
+     *          reason: string,
+     *          rate: string,
+     *          fee: string,
+     *          fee_currency: string,
+     *          created: int,
+     *          updated: int,
+     *      }
+     *  }
+     *
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function getInternationalTransfer(string $reference): array
+    {
+        return Http::withHeaders($this->getHeader())
+            ->get(config('easy-link.url') . '/transfer/get-international-transfer', ['reference' => $reference])
+            ->json();
+    }
+
 }
