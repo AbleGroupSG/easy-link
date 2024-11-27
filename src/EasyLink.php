@@ -156,6 +156,35 @@ class EasyLink extends EasyLinkAbstract
     }
 
     /**
+     * @param array{
+     *      destination_country: string,
+     *      beneficiary_account_type: string,
+     *      segment: string
+     * }$payload
+     * @return array{
+     *      code: int,
+     *      message: string,
+     *      data: array<int, array{
+     *         purpose: string,
+     *         purpose_code: string,
+     *     }>
+     *  }
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function remittancePurposesList(array $payload): array
+    {
+        $payload = [
+            'destination_country' => $payload['destination_country'],
+            'beneficiary_account_type' => $payload['beneficiary_account_type'],
+            'segment' => $payload['segment'],
+        ];
+        return Http::withHeaders($this->getHeader($payload))
+            ->post(config('easy-link.url') . '/data/get-remittance-purposes', $payload)
+            ->json();
+    }
+
+    /**
      * @return array{
      *      code: int,
      *      message: string,
@@ -241,4 +270,72 @@ class EasyLink extends EasyLinkAbstract
             ->json();
     }
 
+
+    /**
+     * Creates an international transfer using the provided payload.
+     *
+     * This method sends a POST request to the Easy-Link API to initiate an international transfer.
+     *
+     * @param array{
+     *   "transaction": array{
+     *     "destination_country": string,
+     *     "destination_currency": string,
+     *     "destination_amount": float
+     *   },
+     *   "source": array{
+     *     "segment": string,
+     *     "address_country": string,
+     *     "address_city": string,
+     *     "address_line": string,
+     *     "company_name": string,
+     *     "company_trading_name": string,
+     *     "company_registration_number": string,
+     *     "company_registration_country": string
+     *   },
+     *   "destination": array{
+     *     "segment": string,
+     *     "email": string,
+     *     "swift_code" : string,
+     *     "beneficiary_account_type": string,
+     *     "bank": string,
+     *     "bank_code": string,
+     *     "bank_account_number": string,
+     *     "company_name": string,
+     *     "address_city": string,
+     *     "address_country": string,
+     *     "address_line": string,
+     *     "relation": string,
+     *     "relation_code": string,
+     *     "purpose": string,
+     *     "purpose_code": string,
+     *     "source_of_income": string,
+     *     "source_of_income_code": string,
+     *     "contract_key": string
+     *   },
+     *   "reference": string
+     * }
+     * $payload
+     * @return array The response from the Easy-Link API.
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function createInternationalTransfer(array $payload): array
+    {
+        return Http::withHeaders($this->getHeader($payload))
+            ->post(config('easy-link.url') . '/transfer/create-international-transfer', $payload)
+            ->json();
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
