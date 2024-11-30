@@ -46,18 +46,28 @@ abstract class EasyLinkAbstract
         $post['X-EasyLink-Nonce'] = $uuid;
         $post['X-EasyLink-Timestamp'] = $time;
 
-        $keys = array_keys($post);
+        $flatPost = $this->flattenArray($post);
+
+        $keys = array_keys($flatPost);
         array_multisort($keys);
 
         $originStr = '';
+        $isFirst = true;
         foreach ($keys as $key) {
-            $originStr .= ($originStr === '' ? '' : '&') . $key . '=' . urlencode($post[$key]);
+            $value = $flatPost[$key];
+            if ($isFirst) {
+                $originStr .= $key . '=' . urlencode($value);
+                $isFirst = false;
+            } else {
+                $originStr .= '&' . $key . '=' . urlencode($value);
+            }
         }
 
         $sign = config('easy-link.company_key') . $originStr . config('easy-link.company_key');
 
-        $keyPath = 'file://' . config('easy-link.private_key');
-        $privateKey = openssl_pkey_get_private($keyPath);
+        $pemPrivateKeyPath = 'file://' . config('easy-link.private_key');
+        $privateKey = openssl_pkey_get_private($pemPrivateKeyPath);
+
         if (!$privateKey) {
             throw new Exception("Unable to load private key");
         }
@@ -67,5 +77,26 @@ abstract class EasyLinkAbstract
         }
 
         return base64_encode($signature);
+    }
+
+    /**
+     * Recursively flattens a multidimensional array.
+     *
+     * @param array  $array  The array to flatten.
+     * @param string $prefix The prefix for nested keys.
+     * @return array The flattened array.
+     */
+    private function flattenArray(array $array, string $prefix = ''): array
+    {
+        $result = [];
+        foreach ($array as $key => $value) {
+            $newKey = $prefix === '' ? $key : "{$prefix}.{$key}";
+            if (is_array($value)) {
+                $result += $this->flattenArray($value, $newKey);
+            } else {
+                $result[$newKey] = $value;
+            }
+        }
+        return $result;
     }
 }
