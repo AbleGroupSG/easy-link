@@ -134,6 +134,29 @@ class EasyLink extends EasyLinkAbstract
     }
 
     /**
+     * @param string $segment
+     * @return array{
+     *      code: int,
+     *      message: string,
+     *     data: array<int, array{
+     *         relation: string,
+     *         relation_code: string
+     *     }>
+     *  }
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function relationshipsList(string $segment): array
+    {
+        $payload = [
+            'segment' => $segment
+        ];
+        return Http::withHeaders($this->getHeader($payload))
+            ->post(config('easy-link.url') . '/data/get-relationships', $payload)
+            ->json();
+    }
+
+    /**
      * @param string $countryCode
      * @return array{
      *      code: int,
