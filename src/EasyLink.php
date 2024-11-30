@@ -126,10 +126,35 @@ class EasyLink extends EasyLinkAbstract
      * @throws ConnectionException
      * @throws Exception
      */
-    public function bankList(): array
+    public function localBankList(): array
     {
         return Http::withHeaders($this->getHeader())
             ->post(config('easy-link.url') . '/v2/data/supported-bank-code')
+            ->json();
+    }
+
+    /**
+     * @param string $countryCode
+     * @return array{
+     *      code: int,
+     *      message: string,
+     *     data: array<int, array{
+     *         pid_code: string,
+     *         code: string,
+     *         name: string,
+     *         alias: string,
+     *     }>
+     *  }
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function internationalBankList(string $countryCode): array
+    {
+        $payload = [
+            'country' => $countryCode
+        ];
+        return Http::withHeaders($this->getHeader($payload))
+            ->post(config('easy-link.url') . '/data/bank-list', $payload)
             ->json();
     }
 
