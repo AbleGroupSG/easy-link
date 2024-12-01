@@ -233,6 +233,33 @@ class EasyLink extends EasyLinkAbstract
     }
 
     /**
+     * @param array{
+     *    destination_country: string,
+     *    segment: string,
+     * }$payload
+     * @return array{
+     *      code: int,
+     *      message: string,
+     *     data: array<int, array{
+     *         source_of_income: string,
+     *         source_of_income_code: string,
+     *     }>
+     *  }
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function getSourceOfIncomeList(array $payload): array
+    {
+        $payload = [
+            'destination_country' => $payload['destination_country'],
+            'segment' => $payload['segment'],
+        ];
+        return Http::withHeaders($this->getHeader($payload))
+            ->post(config('easy-link.url') . '/data/get-sources-of-funds', $payload)
+            ->json();
+    }
+
+    /**
      * @return array{
      *      code: int,
      *      message: string,
