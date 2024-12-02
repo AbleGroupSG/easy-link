@@ -402,6 +402,22 @@ class EasyLink extends EasyLinkAbstract
     }
 
 
+    /**
+     *
+     * @param string $reference The reference of the international transfer to confirm.
+     * @return array The response from the Easy-Link API.
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function confirmInternationalTransfer(string $reference): array
+    {
+        $payload = [
+            'reference' => $reference
+        ];
+        return Http::withHeaders($this->getHeader($payload))
+            ->post(config('easy-link.url') . '/transfer/confirm-international-transfer', $payload)
+            ->json();
+    }
 }
 
 
