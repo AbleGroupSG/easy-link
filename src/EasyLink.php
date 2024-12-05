@@ -418,6 +418,31 @@ class EasyLink extends EasyLinkAbstract
             ->post(config('easy-link.url') . '/transfer/confirm-international-transfer', $payload)
             ->json();
     }
+
+    /**
+     * @param array{
+     *     "source_currency": string,
+     *     "destination_currency": string,
+     *     "destination_segment": string,
+     * } $payload
+     *
+     * @return array{
+     *     "code": int,
+     *     "message": string,
+     *     "data": array{
+     *       "rate": numeric,
+     *       "source_currency": string,
+     *       "destination_currency": string,
+     *     }
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function getQuote(array $payload):array
+    {
+        return Http::withHeaders($this->getHeader($payload))
+            ->post(config('easy-link.url') . '/quotes/get-quotes', $payload)
+            ->json();
+    }
 }
 
 
