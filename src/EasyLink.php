@@ -443,6 +443,31 @@ class EasyLink extends EasyLinkAbstract
             ->post(config('easy-link.url') . '/quotes/get-quotes', $payload)
             ->json();
     }
+
+    /**
+     * @param array{
+     *     country: string,
+     *     bank_code: string
+     * } $payload
+     *
+     * @return array{
+     *      "code": int,
+     *      "message": string,
+     *      "data": array{
+     *        "pid_code": numeric,
+     *        "code": string,
+     *        "name": string,
+     *        "alias": string,
+     *      }
+     * @throws ConnectionException
+     * @throws Exception
+ */
+    public function getBranchesList(array $payload): array
+    {
+        return Http::withHeaders($this->getHeader($payload))
+            ->post(config('easy-link.url') . '/data/branch-list', $payload)
+            ->json();
+    }
 }
 
 
