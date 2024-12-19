@@ -21,7 +21,7 @@ abstract class EasyLinkAbstract
     /**
      * @throws Exception
      */
-    protected function getHeader(?array $payload = []):array
+    public function getHeader(?array $payload = []):array
     {
         $uuid = (string) Str::uuid();
         $timestamp = now()->timestamp * 1000;
